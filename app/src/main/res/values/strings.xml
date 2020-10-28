@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Movie App</string>
+    <string name="empty_movies">There are no movies</string>
+    <string name="movie_list_title">Movies</string>
 </resources>
