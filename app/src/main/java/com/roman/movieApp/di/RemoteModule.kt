@@ -1,6 +1,7 @@
 package com.roman.movieApp.di
 
 import com.roman.movieApp.repository.ApiDescription
+import com.roman.movieApp.util.apiKEY
 import com.squareup.moshi.Moshi
 import okhttp3.OkHttpClient
 import org.koin.dsl.module
@@ -14,7 +15,14 @@ val remoteModule = module {
 
     single {
         OkHttpClient.Builder()
-            .build()
+            .addInterceptor { chain ->
+                val request = chain.request().newBuilder()
+                val originalHttpUrl = chain.request().url()
+                val url = originalHttpUrl.newBuilder().addQueryParameter("api_key", apiKEY).build()
+                request.url(url)
+                val response = chain.proceed(request.build())
+                return@addInterceptor response
+            }.build()
     }
 
     single {

@@ -7,6 +7,7 @@ import com.airbnb.epoxy.EpoxyModelClass
 import com.airbnb.epoxy.EpoxyModelWithHolder
 import com.roman.movieApp.R
 import com.roman.movieApp.repository.Result
+import com.roman.movieApp.util.imgBaseUrl
 import com.squareup.picasso.Picasso
 
 
@@ -15,9 +16,15 @@ abstract class MovieListModel : EpoxyModelWithHolder<MovieListModel.Holder>() {
     @EpoxyAttribute
     var movie: Result? = null
 
-    private val imgBaseUrl = "http://image.tmdb.org/t/p/w185/"
+    @EpoxyAttribute
+    var onClick: (movie: Result) -> Unit = {}
 
     override fun bind(holder: Holder) {
+        holder.view.setOnClickListener {
+            movie?.let {
+                onClick(it)
+            }
+        }
         Picasso.get().load(imgBaseUrl + movie?.posterPath).into(holder.imgPoster);
         holder.titleView.text = movie?.title
         holder.score.text = movie?.voteAverage.toString()

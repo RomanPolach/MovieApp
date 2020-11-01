@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.airbnb.epoxy.EpoxyRecyclerView
-        android:id="@+id/epoxyRecyclerView"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/tooolbar_main"
+            android:background="@color/design_default_color_primary"
+            app:titleTextColor="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <com.airbnb.epoxy.EpoxyRecyclerView
+            android:id="@+id/epoxyRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
 
     <ProgressBar
         android:layout_width="wrap_content"
@@ -15,16 +31,5 @@
         android:layout_gravity="center"
         android:visibility="invisible"
         android:id="@+id/progressBar" />
-
-    <TextView
-        android:id="@+id/empty_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textSize="25dp"
-        android:gravity="center"
-        android:layout_gravity="center"
-        android:textColor="@android:color/black"
-        android:text="@string/empty_movies"
-        android:visibility="invisible" />
 
 </FrameLayout>

@@ -12,7 +12,7 @@ data class Result(
     @Json(name = "genre_ids")
     val genreIds: List<Int>? = listOf(),
     @Json(name = "id")
-    val id: Int? = 0,
+    val id: String = "0",
     @Json(name = "original_language")
     val originalLanguage: String? = "",
     @Json(name = "original_title")

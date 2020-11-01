@@ -2,4 +2,8 @@
     <string name="app_name">Movie App</string>
     <string name="empty_movies">There are no movies</string>
     <string name="movie_list_title">Movies</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="images_title">Images</string>
+    <string name="summary">Summary</string>
 </resources>
