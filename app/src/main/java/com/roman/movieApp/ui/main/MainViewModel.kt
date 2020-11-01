@@ -7,7 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.roman.movieApp.repository.MovieRepository
 import com.roman.movieApp.repository.Result
 import com.roman.movieApp.util.State
-import kotlinx.coroutines.Dispatchers
+import com.roman.movieApp.util.setError
+import com.roman.movieApp.util.setLoading
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -16,12 +17,12 @@ class MainViewModel(val movieRepository: MovieRepository) : ViewModel() {
 
     private val movieListStateObserver = MutableLiveData<State<List<Result>>>()
     private val searchChanel = ConflatedBroadcastChannel<String>()
-    val searchObserver = searchChanel.asFlow().filter {
+    private val searchObserver = searchChanel.asFlow().filter {
         it.isNotBlank()
     }.flatMapLatest {
         movieRepository.search(it)
     }.catch {
-        movieListStateObserver.postValue(State.Error(it))
+        movieListStateObserver.setError(it)
     }.onEach { results ->
         results?.let {
             movieListStateObserver.postValue(if (results.isEmpty()) State.Empty else State.Loaded(it))
@@ -33,9 +34,9 @@ class MainViewModel(val movieRepository: MovieRepository) : ViewModel() {
     }
 
     fun loadMovies() {
-        movieListStateObserver.postValue(State.Loading)
+        movieListStateObserver.setLoading()
 
-        viewModelScope.launch(context = Dispatchers.IO) {
+        viewModelScope.launch {
             movieRepository.getMovies().onEach { results ->
                 results?.let {
                     movieListStateObserver.postValue(
@@ -45,7 +46,7 @@ class MainViewModel(val movieRepository: MovieRepository) : ViewModel() {
                     )
                 }
             }.catch {
-                movieListStateObserver.postValue(State.Error(it))
+                movieListStateObserver.setError(it)
             }.collect()
         }
     }

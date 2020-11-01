@@ -17,7 +17,7 @@ val remoteModule = module {
         OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val request = chain.request().newBuilder()
-                val originalHttpUrl = chain.request().url()
+                val originalHttpUrl = chain.request().url
                 val url = originalHttpUrl.newBuilder().addQueryParameter("api_key", apiKEY).build()
                 request.url(url)
                 val response = chain.proceed(request.build())

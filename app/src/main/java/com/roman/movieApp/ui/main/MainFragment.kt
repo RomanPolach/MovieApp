@@ -25,7 +25,6 @@ import com.roman.movieApp.ui.main.epoxy.movieList
 import com.roman.movieApp.util.State
 import com.roman.movieApp.util.isVisible
 import com.roman.movieApp.util.px
-import com.roman.movieApp.util.withModels
 import kotlinx.android.synthetic.main.main_fragment.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -122,10 +121,10 @@ class MainFragment : Fragment() {
 
     private fun setToolbar() {
         tooolbar_main.inflateMenu(R.menu.main_menu)
-        tooolbar_main.title = "Popular movies"
+        tooolbar_main.title = getString(R.string.popular_movies)
 
         val myActionMenuItem = tooolbar_main.menu.findItem(R.id.app_bar_search)
-        val searchView = myActionMenuItem.getActionView() as SearchView
+        val searchView = myActionMenuItem.actionView as SearchView
 
         val searchIcon = searchView.findViewById<ImageView>(androidx.appcompat.R.id.search_button)
         val mCloseButton = searchView.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
@@ -136,16 +135,8 @@ class MainFragment : Fragment() {
             Color.WHITE,
             PorterDuff.Mode.SRC_IN
         )
-
-        searchIcon.setColorFilter(
-            Color.WHITE,
-            PorterDuff.Mode.SRC_IN
-        )
-
-        mCloseButton.setColorFilter(
-            Color.WHITE,
-            PorterDuff.Mode.SRC_IN
-        )
+        searchIcon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN)
+        mCloseButton.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN)
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(searchTerm: String): Boolean {

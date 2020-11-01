@@ -14,7 +14,6 @@ import com.roman.movieApp.repository.MovieDetail
 import com.roman.movieApp.util.State
 import com.roman.movieApp.util.imgBaseUrlBig
 import com.roman.movieApp.util.isVisible
-import com.roman.movieApp.util.withModels
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_movie_detail.*
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -22,11 +21,7 @@ import org.koin.core.parameter.parametersOf
 
 class MovieDetailFragment : Fragment() {
     private val viewModel: MovieDetailViewModel by viewModel {
-        parametersOf(
-            arguments?.getString(
-                MOVIE_ID_KEY
-            )
-        )
+        parametersOf(arguments?.getString(MOVIE_ID_KEY))
     }
 
     companion object {
@@ -71,10 +66,7 @@ class MovieDetailFragment : Fragment() {
         txt_released.text = "Released: ${movie.releaseDate}"
         txt_summary.text = movie.overview
         txt_origin.text = "Language: ${movie.originalLanguage}"
-        detailrecyclerview.adapter.apply {
-            val menu = toolbar.menu
-        }
-        
+
         images_title.isVisible = movie.images?.backdrops?.isNotEmpty() ?: false
         detailrecyclerview.withModels {
             movie.images?.backdrops?.forEach {

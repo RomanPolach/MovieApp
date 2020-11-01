@@ -7,7 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.roman.movieApp.repository.MovieDetail
 import com.roman.movieApp.repository.MovieRepository
 import com.roman.movieApp.util.State
-import kotlinx.coroutines.Dispatchers
+import com.roman.movieApp.util.setError
+import com.roman.movieApp.util.setLoaded
+import com.roman.movieApp.util.setLoading
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -17,16 +19,15 @@ class MovieDetailViewModel(val movieRepository: MovieRepository, val movieId: St
     private val movieDetailStateObserver = MutableLiveData<State<MovieDetail>>()
 
     init {
-        movieDetailStateObserver.postValue(State.Loading)
+        movieDetailStateObserver.setLoading()
 
-        viewModelScope.launch(context = Dispatchers.IO) {
-            movieDetailStateObserver.postValue(State.Loading)
+        viewModelScope.launch {
             try {
                 movieRepository.getMovieDetail(movieId).collect {
-                    movieDetailStateObserver.postValue(State.Loaded(it))
+                    movieDetailStateObserver.setLoaded(it)
                 }
             } catch (e: Exception) {
-                movieDetailStateObserver.postValue(State.Error(e))
+                movieDetailStateObserver.setError(e)
             }
         }
     }

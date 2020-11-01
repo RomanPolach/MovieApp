@@ -11,6 +11,4 @@ val viewModelModule = module {
     viewModel { MainViewModel(get()) }
 
     viewModel { (movieId: String) -> MovieDetailViewModel(get(), movieId) }
-
-
 }
