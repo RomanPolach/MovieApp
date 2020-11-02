@@ -25,10 +25,10 @@ abstract class MovieListModel : EpoxyModelWithHolder<MovieListModel.Holder>() {
                 onClick(it)
             }
         }
-        Picasso.get().load(imgBaseUrl + movie?.posterPath).into(holder.imgPoster);
-        holder.titleView.text = movie?.title
-        holder.score.text = movie?.voteAverage.toString()
-        holder.actors.text = movie?.genres?.joinToString(separator = ", ")
+        Picasso.get().load(imgBaseUrl + movie?.posterPath).into(holder.imgPoster)
+        holder.titleView.text = movie?.title ?: ""
+        holder.score.text = movie?.voteAverage?.toString() ?: ""
+        holder.actors.text = movie?.genres?.joinToString(separator = ", ") ?: ""
     }
 
     class Holder : KotlinEpoxyHolder() {

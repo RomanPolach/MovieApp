@@ -11,12 +11,11 @@ import com.roman.movieApp.util.setError
 import com.roman.movieApp.util.setLoading
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 
 class MainViewModel(val movieRepository: MovieRepository) : ViewModel() {
 
     private val movieListStateObserver = MutableLiveData<State<List<Result>>>()
-    private val searchChanel = ConflatedBroadcastChannel<String>()
+    private val searchChanel = ConflatedBroadcastChannel("")
     private val searchObserver = searchChanel.asFlow().filter {
         it.isNotBlank()
     }.flatMapLatest {
@@ -34,21 +33,23 @@ class MainViewModel(val movieRepository: MovieRepository) : ViewModel() {
     }
 
     fun loadMovies() {
+        if (searchChanel.value.isNotBlank()) {
+            return
+        }
+
         movieListStateObserver.setLoading()
 
-        viewModelScope.launch {
-            movieRepository.getMovies().onEach { results ->
-                results?.let {
-                    movieListStateObserver.postValue(
-                        if (results.isEmpty()) State.Empty else State.Loaded(
-                            it
-                        )
+        movieRepository.getMoviesPage().onEach { results ->
+            results?.let {
+                movieListStateObserver.postValue(
+                    if (results.isEmpty()) State.Empty else State.Loaded(
+                        it
                     )
-                }
-            }.catch {
-                movieListStateObserver.setError(it)
-            }.collect()
-        }
+                )
+            }
+        }.catch {
+            movieListStateObserver.setError(it)
+        }.launchIn(viewModelScope)
     }
 
     fun observeMovies(): LiveData<State<List<Result>>> = movieListStateObserver

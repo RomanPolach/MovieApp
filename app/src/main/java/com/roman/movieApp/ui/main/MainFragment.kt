@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fondesa.recyclerviewdivider.RecyclerViewDivider
 import com.roman.movieApp.MainActivity
@@ -22,6 +23,7 @@ import com.roman.movieApp.repository.Result
 import com.roman.movieApp.ui.main.detail.MovieDetailFragment
 import com.roman.movieApp.ui.main.epoxy.empty
 import com.roman.movieApp.ui.main.epoxy.movieList
+import com.roman.movieApp.util.InfiniteScrollListener
 import com.roman.movieApp.util.State
 import com.roman.movieApp.util.isVisible
 import com.roman.movieApp.util.px
@@ -49,6 +51,9 @@ class MainFragment : Fragment() {
         setToolbar()
         addEpoxyDivider()
 
+        epoxyRecyclerView.addOnScrollListener((InfiniteScrollListener({
+            viewModel.loadMovies()
+        }, epoxyRecyclerView.layoutManager as LinearLayoutManager)))
         epoxyRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)

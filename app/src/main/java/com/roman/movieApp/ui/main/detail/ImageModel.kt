@@ -12,10 +12,10 @@ import com.squareup.picasso.Picasso
 @EpoxyModelClass(layout = R.layout.movie_image_layout)
 abstract class ImageModel : EpoxyModelWithHolder<ImageModel.Holder>() {
     @EpoxyAttribute
-    var imgUrl: String = ""
+    var imgUrl: String? = null
 
     override fun bind(holder: Holder) {
-        Picasso.get().load(imgUrl).into(holder.imageView);
+        Picasso.get().load(imgUrl).into(holder.imageView)
     }
 
     class Holder : KotlinEpoxyHolder() {
