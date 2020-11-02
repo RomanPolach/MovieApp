@@ -10,5 +10,5 @@ Used technologies:
 - Picasso library
 - MVVM architecture
 - Epoxy for RecyclerView
+- Endless scrolling
 
-For now paging not implemented, showing only first 20 results, will be in next version. 
