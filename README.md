@@ -12,3 +12,12 @@ Used technologies:
 - Epoxy for RecyclerView
 - Endless scrolling
 
+
+<img src="https://github.com/RomanPolach/MovieApp/blob/master/app/Screenshot_2020-11-01-17-17-19-370_com.roman.movieApp.png" width=“400” height="600" >
+
+
+<img src="https://github.com/RomanPolach/MovieApp/blob/master/app/Screenshot_2020-11-01-17-17-31-179_com.roman.movieApp.png" width=“400” height="600" >
+
+
+<img src="https://github.com/RomanPolach/MovieApp/blob/master/app/Screenshot_2020-11-01-17-18-00-129_com.roman.movieApp.png" width=“400” height="600" >
+
