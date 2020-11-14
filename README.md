@@ -1,6 +1,6 @@
 # MovieApp
 
-Example app showing list of popular movies and details with search functionality. 
+Example app showing list of popular movies loaded from themoviedb.org and their details. It is possible to search movies. 
 
 Used technologies:
 - Flow
