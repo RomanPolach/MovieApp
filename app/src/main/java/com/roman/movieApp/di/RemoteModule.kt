@@ -1,6 +1,7 @@
 package com.roman.movieApp.di
 
 import com.roman.movieApp.repository.ApiDescription
+import com.roman.movieApp.util.ErrorsCallAdapterFactory
 import com.roman.movieApp.util.apiKEY
 import com.squareup.moshi.Moshi
 import okhttp3.OkHttpClient
@@ -34,6 +35,7 @@ val remoteModule = module {
                         .build()
                 )
             )
+            .addCallAdapterFactory(ErrorsCallAdapterFactory())
             .client(get())
             .build()
             .create(ApiDescription::class.java)

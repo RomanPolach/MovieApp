@@ -7,8 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.roman.movieApp.repository.MovieRepository
 import com.roman.movieApp.repository.Result
 import com.roman.movieApp.util.State
+import com.roman.movieApp.util.launchRequestWithState
 import com.roman.movieApp.util.setError
-import com.roman.movieApp.util.setLoading
+import com.roman.movieApp.util.setLoaded
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
 
@@ -24,7 +25,7 @@ class MainViewModel(val movieRepository: MovieRepository) : ViewModel() {
         movieListStateObserver.setError(it)
     }.onEach { results ->
         results?.let {
-            movieListStateObserver.postValue(if (results.isEmpty()) State.Empty else State.Loaded(it))
+            movieListStateObserver.setLoaded(it)
         }
     }.launchIn(viewModelScope)
 
@@ -37,19 +38,7 @@ class MainViewModel(val movieRepository: MovieRepository) : ViewModel() {
             return
         }
 
-        movieListStateObserver.setLoading()
-
-        movieRepository.getMoviesPage().onEach { results ->
-            results?.let {
-                movieListStateObserver.postValue(
-                    if (results.isEmpty()) State.Empty else State.Loaded(
-                        it
-                    )
-                )
-            }
-        }.catch {
-            movieListStateObserver.setError(it)
-        }.launchIn(viewModelScope)
+        viewModelScope.launchRequestWithState({ movieRepository.getMoviesPage() }, movieListStateObserver)
     }
 
     fun observeMovies(): LiveData<State<List<Result>>> = movieListStateObserver

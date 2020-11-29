@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -23,10 +22,7 @@ import com.roman.movieApp.repository.Result
 import com.roman.movieApp.ui.main.detail.MovieDetailFragment
 import com.roman.movieApp.ui.main.epoxy.empty
 import com.roman.movieApp.ui.main.epoxy.movieList
-import com.roman.movieApp.util.InfiniteScrollListener
-import com.roman.movieApp.util.State
-import com.roman.movieApp.util.isVisible
-import com.roman.movieApp.util.px
+import com.roman.movieApp.util.*
 import kotlinx.android.synthetic.main.main_fragment.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -65,30 +61,31 @@ class MainFragment : Fragment() {
 
         viewModel.observeMovies().observe(viewLifecycleOwner, Observer { state ->
             when (state) {
-                is State.Empty -> {
-                    showProgress(false)
-                    showEmptyLayout()
-                }
                 is State.Loading -> {
                     showProgress(true)
                 }
                 is State.Loaded -> {
                     showProgress(false)
-                    showMovies(state.data)
+                    if (state.data.isEmpty()) {
+                        showEmptyLayout()
+                    } else {
+                        showMovies(state.data)
+                    }
                 }
                 is State.Error -> {
                     showProgress(false)
-                    Toast.makeText(context, state.error.toString(), Toast.LENGTH_LONG).show()
+                    handleError(state.error)
                 }
             }
         })
     }
 
+
     fun addEpoxyDivider() {
         epoxyRecyclerView.addItemDecoration(
             RecyclerViewDivider.with(requireContext())
-                .inset(16.px, 16.px)
-                .size(2.px)
+                .inset(16.dp, 16.dp)
+                .size(2.dp)
                 .hideLastDivider()
                 .color(Color.BLACK)
                 .build()

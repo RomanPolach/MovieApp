@@ -7,11 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.roman.movieApp.repository.MovieDetail
 import com.roman.movieApp.repository.MovieRepository
 import com.roman.movieApp.util.State
-import com.roman.movieApp.util.setError
-import com.roman.movieApp.util.setLoaded
-import com.roman.movieApp.util.setLoading
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
+import com.roman.movieApp.util.launchRequestWithState
 
 class MovieDetailViewModel(val movieRepository: MovieRepository, val movieId: String) :
     ViewModel() {
@@ -19,17 +15,7 @@ class MovieDetailViewModel(val movieRepository: MovieRepository, val movieId: St
     private val movieDetailStateObserver = MutableLiveData<State<MovieDetail>>()
 
     init {
-        movieDetailStateObserver.setLoading()
-
-        viewModelScope.launch {
-            try {
-                movieRepository.getMovieDetail(movieId).collect {
-                    movieDetailStateObserver.setLoaded(it)
-                }
-            } catch (e: Exception) {
-                movieDetailStateObserver.setError(e)
-            }
-        }
+        viewModelScope.launchRequestWithState(request = { movieRepository.getMovieDetail(movieId) }, mutableLiveData = movieDetailStateObserver)
     }
 
     fun observeMovieDetail(): LiveData<State<MovieDetail>> = movieDetailStateObserver

@@ -5,13 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.roman.movieApp.R
 import com.roman.movieApp.repository.MovieDetail
 import com.roman.movieApp.util.State
+import com.roman.movieApp.util.handleError
 import com.roman.movieApp.util.imgBaseUrlBig
 import com.roman.movieApp.util.isVisible
 import com.squareup.picasso.Picasso
@@ -50,7 +50,7 @@ class MovieDetailFragment : Fragment() {
 
             when (state) {
                 is State.Loaded -> showMovie(state.data)
-                is State.Error -> Toast.makeText(context, "Loading failed: ${state.error.message}", Toast.LENGTH_LONG).show()
+                is State.Error -> handleError(state.error)
             }
         })
     }
