@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.roman.movieApp.R
 import com.roman.movieApp.repository.MovieDetail
 import com.roman.movieApp.util.State
@@ -16,6 +17,7 @@ import com.roman.movieApp.util.imgBaseUrlBig
 import com.roman.movieApp.util.isVisible
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_movie_detail.*
+import kotlinx.android.synthetic.main.main_fragment.*
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -45,6 +47,7 @@ class MovieDetailFragment : Fragment() {
         toolbar.setNavigationOnClickListener {
             activity?.onBackPressed()
         }
+        recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         viewModel.observeMovieDetail().observe(viewLifecycleOwner, Observer { state ->
             loading_layout.isVisible = state is State.Loading
 
@@ -68,13 +71,6 @@ class MovieDetailFragment : Fragment() {
         txt_origin.text = "Language: ${movie.originalLanguage}"
 
         images_title.isVisible = movie.images?.backdrops?.isNotEmpty() ?: false
-        detailrecyclerview.withModels {
-            movie.images?.backdrops?.forEach {
-                image {
-                    id(it.filePath)
-                    imgUrl(imgBaseUrlBig + it.filePath)
-                }
-            }
-        }
+        detailrecyclerview.adapter = ImageAdapter(movie?.images?.backdrops?.map { it.filePath ?: "" } ?: emptyList())
     }
 }

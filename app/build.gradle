@@ -60,10 +60,6 @@ dependencies {
     implementation("org.koin:koin-android-scope:2.1.5")
     implementation("org.koin:koin-android-viewmodel:2.1.5")
 
-    // Epoxy
-    implementation("com.airbnb.android:epoxy:3.9.0")
-    kapt("com.airbnb.android:epoxy-processor:3.9.0")
-
     // OkHttp
     implementation("com.squareup.okhttp3:okhttp:4.3.1")
     implementation("com.squareup.okhttp3:logging-interceptor:4.3.1")

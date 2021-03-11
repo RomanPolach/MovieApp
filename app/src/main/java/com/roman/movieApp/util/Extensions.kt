@@ -5,22 +5,11 @@ import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
-import com.airbnb.epoxy.EpoxyController
-import com.airbnb.epoxy.EpoxyRecyclerView
 import com.roman.movieApp.repository.MovieDbException
 import com.roman.movieApp.repository.NoInternetException
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-
-/** Easily add models to an EpoxyRecyclerView, the same way you would in a buildModels method of EpoxyController. */
-fun EpoxyRecyclerView.withModels(buildModelsCallback: EpoxyController.() -> Unit) {
-    setControllerAndBuildModels(object : EpoxyController() {
-        override fun buildModels() {
-            buildModelsCallback()
-        }
-    })
-}
 
 // Method for launching coroutines, which automaticaly sets loading, loaded or error states to mutablelivedata
 fun <T> CoroutineScope.launchRequestWithState(request: suspend () -> T, mutableLiveData: MutableLiveData<State<T>>) {

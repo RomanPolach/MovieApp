@@ -8,7 +8,7 @@ data class RequestResult(
     @Json(name = "page")
     val page: Int = 0,
     @Json(name = "results")
-    val results: List<Result>? = listOf(),
+    val movies: List<Movie>? = listOf(),
     @Json(name = "total_pages")
     val totalPages: Int? = 0,
     @Json(name = "total_results")

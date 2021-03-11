@@ -14,15 +14,16 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.fondesa.recyclerviewdivider.RecyclerViewDivider
 import com.roman.movieApp.MainActivity
 import com.roman.movieApp.R
-import com.roman.movieApp.repository.Result
+import com.roman.movieApp.repository.Movie
 import com.roman.movieApp.ui.main.detail.MovieDetailFragment
-import com.roman.movieApp.ui.main.epoxy.empty
-import com.roman.movieApp.ui.main.epoxy.movieList
-import com.roman.movieApp.util.*
+import com.roman.movieApp.ui.main.models.MoviesAdapter
+import com.roman.movieApp.util.State
+import com.roman.movieApp.util.dp
+import com.roman.movieApp.util.handleError
+import com.roman.movieApp.util.isVisible
 import kotlinx.android.synthetic.main.main_fragment.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -47,17 +48,7 @@ class MainFragment : Fragment() {
         setToolbar()
         addEpoxyDivider()
 
-        epoxyRecyclerView.addOnScrollListener((InfiniteScrollListener({
-            viewModel.loadMovies()
-        }, epoxyRecyclerView.layoutManager as LinearLayoutManager)))
-        epoxyRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                if (dx < 0 || dy > 0) {
-                    hideKeyboard()
-                }
-            }
-        })
+        recyclerView.layoutManager = LinearLayoutManager(context)
 
         viewModel.observeMovies().observe(viewLifecycleOwner, Observer { state ->
             when (state) {
@@ -82,7 +73,7 @@ class MainFragment : Fragment() {
 
 
     fun addEpoxyDivider() {
-        epoxyRecyclerView.addItemDecoration(
+        recyclerView.addItemDecoration(
             RecyclerViewDivider.with(requireContext())
                 .inset(16.dp, 16.dp)
                 .size(2.dp)
@@ -93,18 +84,10 @@ class MainFragment : Fragment() {
     }
 
 
-    private fun showMovies(movies: List<Result>) {
-        epoxyRecyclerView.withModels {
-            movies.forEach {
-                movieList {
-                    id(it.id)
-                    movie(it)
-                    onClick {
-                        it.id.let { movieId ->
-                            (activity as MainActivity).openFragment(MovieDetailFragment.withArguments(movieId))
-                        }
-                    }
-                }
+    private fun showMovies(movies: List<Movie>) {
+        recyclerView.adapter = MoviesAdapter(movies) { movie ->
+            movie.id.let { movieId ->
+                (activity as MainActivity).openFragment(MovieDetailFragment.withArguments(movieId))
             }
         }
     }
@@ -114,11 +97,12 @@ class MainFragment : Fragment() {
     }
 
     fun showEmptyLayout() {
-        epoxyRecyclerView.withModels {
-            empty {
-                id("empty")
-            }
-        }
+        // TODO - implement empty layout
+//        epoxyRecyclerView.withModels {
+//            empty {
+//                id("empty")
+//            }
+//        }
     }
 
     private fun setToolbar() {

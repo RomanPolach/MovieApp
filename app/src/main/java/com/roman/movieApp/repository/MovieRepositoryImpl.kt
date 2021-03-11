@@ -11,24 +11,24 @@ class MovieRepositoryImpl(val apiDescription: ApiDescription) : MovieRepository 
     private val year = "2020"
     private val sortBy = "popularity.desc"
     private var lastRequestResult: RequestResult? = null
-    private var loadedMovies: List<Result> = emptyList()
+    private var loadedMovies: List<Movie> = emptyList()
 
-    override suspend fun getMoviesPage(): List<Result> {
+    override suspend fun getMoviesPage(): List<Movie> {
         val genres = apiDescription.getGenres()
         var requestResult: RequestResult? = null
-        val results: List<Result>
+        val movies: List<Movie>
 
         if (lastRequestResult == null) {
             requestResult = apiDescription.getMoviesPage(language, year, sortBy)
-            results = requestResult.results ?: emptyList()
+            movies = requestResult.movies ?: emptyList()
         } else if (lastRequestResult != null && lastRequestResult!!.page < lastRequestResult!!.totalPages!!) {
             requestResult = apiDescription.getMoviesPage(language, year, sortBy, (lastRequestResult!!.page + 1).toString())
-            results = loadedMovies + (requestResult.results ?: emptyList())
+            movies = loadedMovies + (requestResult.movies ?: emptyList())
         } else {
-            results = loadedMovies
+            movies = loadedMovies
         }
 
-        results.forEach {
+        movies.forEach {
             it.genres = it.genreIds?.map { id ->
                 genres.genres?.find { genre ->
                     genre.id == id
@@ -36,8 +36,8 @@ class MovieRepositoryImpl(val apiDescription: ApiDescription) : MovieRepository 
             } ?: emptyList()
         }
         lastRequestResult = requestResult
-        loadedMovies = results
-        return results
+        loadedMovies = movies
+        return movies
     }
 
     override suspend fun getMovieDetail(movieId: String): MovieDetail {
@@ -47,10 +47,10 @@ class MovieRepositoryImpl(val apiDescription: ApiDescription) : MovieRepository 
         return movie
     }
 
-    override fun search(movie: String): Flow<List<Result>?> {
+    override fun search(movie: String): Flow<List<Movie>?> {
         return flow {
             val results = apiDescription.search(movie)
-            emit(results.results)
+            emit(results.movies)
         }
     }
 }
