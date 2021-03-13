@@ -10,34 +10,19 @@ class MovieRepositoryImpl(val apiDescription: ApiDescription) : MovieRepository 
     private val language = "en-US"
     private val year = "2020"
     private val sortBy = "popularity.desc"
-    private var lastRequestResult: RequestResult? = null
-    private var loadedMovies: List<Movie> = emptyList()
 
-    override suspend fun getMoviesPage(): List<Movie> {
+    override suspend fun getMoviesPage(page: Int): RequestResult {
         val genres = apiDescription.getGenres()
-        var requestResult: RequestResult? = null
-        val movies: List<Movie>
 
-        if (lastRequestResult == null) {
-            requestResult = apiDescription.getMoviesPage(language, year, sortBy)
-            movies = requestResult.movies ?: emptyList()
-        } else if (lastRequestResult != null && lastRequestResult!!.page < lastRequestResult!!.totalPages!!) {
-            requestResult = apiDescription.getMoviesPage(language, year, sortBy, (lastRequestResult!!.page + 1).toString())
-            movies = loadedMovies + (requestResult.movies ?: emptyList())
-        } else {
-            movies = loadedMovies
-        }
-
-        movies.forEach {
+        val requestResult = apiDescription.getMoviesPage(language, year, sortBy, page)
+        requestResult.movies?.forEach {
             it.genres = it.genreIds?.map { id ->
                 genres.genres?.find { genre ->
                     genre.id == id
                 }?.name ?: ""
             } ?: emptyList()
         }
-        lastRequestResult = requestResult
-        loadedMovies = movies
-        return movies
+        return requestResult
     }
 
     override suspend fun getMovieDetail(movieId: String): MovieDetail {

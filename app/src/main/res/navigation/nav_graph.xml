@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.roman.movieApp.ui.main.MainFragment"
+        android:label="MainFragment">
+        <action
+            android:id="@+id/open_movie_detail"
+            app:destination="@id/movieDetailFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/movieDetailFragment2"
+        android:name="com.roman.movieApp.ui.main.detail.MovieDetailFragment"
+        android:label="MovieDetailFragment">
+        <argument
+            android:name="movieId"
+            app:argType="string" />
+    </fragment>
+</navigation>

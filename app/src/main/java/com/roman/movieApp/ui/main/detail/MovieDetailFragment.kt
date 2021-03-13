@@ -5,9 +5,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.roman.movieApp.R
 import com.roman.movieApp.repository.MovieDetail
@@ -22,16 +22,10 @@ import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 class MovieDetailFragment : Fragment() {
+    val args: MovieDetailFragmentArgs by navArgs()
+
     private val viewModel: MovieDetailViewModel by viewModel {
-        parametersOf(arguments?.getString(MOVIE_ID_KEY))
-    }
-
-    companion object {
-        private val MOVIE_ID_KEY = "movie_id"
-
-        fun withArguments(movieId: String) = MovieDetailFragment().apply {
-            arguments = bundleOf(MOVIE_ID_KEY to movieId)
-        }
+        parametersOf(args.movieId)
     }
 
     override fun onCreateView(
@@ -47,7 +41,7 @@ class MovieDetailFragment : Fragment() {
         toolbar.setNavigationOnClickListener {
             activity?.onBackPressed()
         }
-        recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        recyclerView?.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         viewModel.observeMovieDetail().observe(viewLifecycleOwner, Observer { state ->
             loading_layout.isVisible = state is State.Loading
 

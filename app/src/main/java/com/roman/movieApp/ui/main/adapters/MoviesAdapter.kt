@@ -1,17 +1,19 @@
-package com.roman.movieApp.ui.main.models
+package com.roman.movieApp.ui.main.adapters
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.roman.movieApp.R
 import com.roman.movieApp.repository.Movie
 import com.roman.movieApp.util.imgBaseUrl
 import com.squareup.picasso.Picasso
 
-class MoviesAdapter(val movies: List<Movie>, private val onItemClicked: (Movie) -> Unit) : RecyclerView.Adapter<MoviesAdapter.ViewHolder>() {
+class MoviesAdapter(private val onItemClicked: (Movie) -> Unit) :
+    PagingDataAdapter<Movie, MoviesAdapter.ViewHolder>(MovieComparator) {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val imgPoster: ImageView
@@ -32,14 +34,10 @@ class MoviesAdapter(val movies: List<Movie>, private val onItemClicked: (Movie) 
         return ViewHolder(view)
     }
 
-    override fun getItemCount(): Int {
-        return movies.size
-    }
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val movie = movies.get(position)
+        val movie = getItem(position)
         holder.itemView.setOnClickListener {
-            movie.let {
+            movie?.let {
                 onItemClicked(movie)
             }
         }

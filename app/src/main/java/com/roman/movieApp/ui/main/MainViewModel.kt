@@ -4,16 +4,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.roman.movieApp.repository.Movie
+import com.roman.movieApp.repository.MoviePagingSource
 import com.roman.movieApp.repository.MovieRepository
 import com.roman.movieApp.util.State
-import com.roman.movieApp.util.launchRequestWithState
 import com.roman.movieApp.util.setError
-import com.roman.movieApp.util.setLoaded
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
 
 class MainViewModel(val movieRepository: MovieRepository) : ViewModel() {
+
+    val searchedMovies = MutableLiveData<List<Movie>>()
 
     private val movieListStateObserver = MutableLiveData<State<List<Movie>>>()
     private val searchChanel = ConflatedBroadcastChannel("")
@@ -25,23 +29,24 @@ class MainViewModel(val movieRepository: MovieRepository) : ViewModel() {
         movieListStateObserver.setError(it)
     }.onEach { results ->
         results?.let {
-            movieListStateObserver.setLoaded(it)
+            searchedMovies.postValue(results)
         }
     }.launchIn(viewModelScope)
 
-    init {
-        loadMovies()
-    }
+    var movies: Flow<PagingData<Movie>> = Pager(PagingConfig(pageSize = 20, prefetchDistance = 10)) {
+        MoviePagingSource(movieRepository)
+    }.flow
 
     fun loadMovies() {
         if (searchChanel.value.isNotBlank()) {
             return
         }
-
-        viewModelScope.launchRequestWithState({ movieRepository.getMoviesPage() }, movieListStateObserver)
+        movies = Pager(PagingConfig(pageSize = 20, prefetchDistance = 10)) {
+            MoviePagingSource(movieRepository)
+        }.flow
     }
 
-    fun observeMovies(): LiveData<State<List<Movie>>> = movieListStateObserver
+    fun observeSearchResults(): LiveData<List<Movie>> = searchedMovies
 
     fun setSearchTerm(searchTerm: String) {
         searchChanel.offer(searchTerm)
@@ -49,6 +54,5 @@ class MainViewModel(val movieRepository: MovieRepository) : ViewModel() {
 
     fun resetSearch() {
         searchChanel.offer("")
-        loadMovies()
     }
 }

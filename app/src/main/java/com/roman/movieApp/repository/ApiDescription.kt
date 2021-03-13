@@ -12,7 +12,7 @@ interface ApiDescription {
         @Query("language") language: String,
         @Query("primary_release_year") year: String,
         @Query("sort_by") sortBy: String,
-        @Query("page") page: String? = null
+        @Query("page") page: Int? = null
     ): RequestResult
 
     @GET("genre/movie/list")

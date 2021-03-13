@@ -13,28 +13,33 @@ import android.widget.ImageView
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fondesa.recyclerviewdivider.RecyclerViewDivider
-import com.roman.movieApp.MainActivity
 import com.roman.movieApp.R
-import com.roman.movieApp.repository.Movie
-import com.roman.movieApp.ui.main.detail.MovieDetailFragment
-import com.roman.movieApp.ui.main.models.MoviesAdapter
-import com.roman.movieApp.util.State
+import com.roman.movieApp.ui.main.adapters.MoviesAdapter
+import com.roman.movieApp.ui.main.adapters.SearchAdapter
 import com.roman.movieApp.util.dp
 import com.roman.movieApp.util.handleError
 import com.roman.movieApp.util.isVisible
 import kotlinx.android.synthetic.main.main_fragment.*
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.viewModel
 
 
 class MainFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = MainFragment()
-    }
-
     private val viewModel: MainViewModel by viewModel()
+
+    val searchAdapter = SearchAdapter { movie ->
+        openMovieDetail(movie.id)
+    }
+    private val moviesAdapter = MoviesAdapter { movie ->
+        openMovieDetail(movie.id)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,28 +54,35 @@ class MainFragment : Fragment() {
         addEpoxyDivider()
 
         recyclerView.layoutManager = LinearLayoutManager(context)
+        loadMovieList()
 
-        viewModel.observeMovies().observe(viewLifecycleOwner, Observer { state ->
-            when (state) {
-                is State.Loading -> {
-                    showProgress(true)
-                }
-                is State.Loaded -> {
-                    showProgress(false)
-                    if (state.data.isEmpty()) {
-                        showEmptyLayout()
-                    } else {
-                        showMovies(state.data)
-                    }
-                }
-                is State.Error -> {
-                    showProgress(false)
+        viewModel.observeSearchResults().observe(viewLifecycleOwner, Observer() { movies ->
+            recyclerView.adapter = searchAdapter
+            searchAdapter.submitList(movies)
+        })
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            moviesAdapter.loadStateFlow.collectLatest { loadStates ->
+                val state = loadStates.refresh
+                showProgress(state is LoadState.Loading)
+                if (state is LoadState.Error) {
                     handleError(state.error)
                 }
             }
-        })
+        }
     }
 
+    private fun loadMovieList(isReloading: Boolean = false) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.movies.collectLatest {
+                recyclerView.adapter = moviesAdapter
+                moviesAdapter.submitData(it)
+            }
+        }
+        if (isReloading) {
+            viewModel.loadMovies()
+        }
+    }
 
     fun addEpoxyDivider() {
         recyclerView.addItemDecoration(
@@ -83,13 +95,8 @@ class MainFragment : Fragment() {
         )
     }
 
-
-    private fun showMovies(movies: List<Movie>) {
-        recyclerView.adapter = MoviesAdapter(movies) { movie ->
-            movie.id.let { movieId ->
-                (activity as MainActivity).openFragment(MovieDetailFragment.withArguments(movieId))
-            }
-        }
+    fun openMovieDetail(movieId: String) {
+        findNavController().navigate(MainFragmentDirections.openMovieDetail(movieId))
     }
 
     fun showProgress(show: Boolean) {
@@ -134,6 +141,7 @@ class MainFragment : Fragment() {
             override fun onQueryTextChange(searchTerm: String?): Boolean {
                 if (searchTerm.isNullOrBlank()) {
                     viewModel.resetSearch()
+                    loadMovieList(true)
                     hideKeyboard()
                 }
                 return true
