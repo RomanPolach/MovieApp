@@ -9,8 +9,7 @@ Used technologies:
 - LiveData
 - Picasso library
 - MVVM architecture
-- Epoxy for RecyclerView
-- Endless scrolling
+- Paging library 3
 
 
 <img src="https://github.com/RomanPolach/MovieApp/blob/master/app/Screenshot_2020-11-01-17-17-19-370_com.roman.movieApp.png" width=“400” height="600" >
