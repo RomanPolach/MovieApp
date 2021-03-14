@@ -1,4 +1,4 @@
-package com.roman.movieApp.repository
+package com.roman.movieApp.model.api
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass

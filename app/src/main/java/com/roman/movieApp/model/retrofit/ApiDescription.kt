@@ -1,5 +1,9 @@
-package com.roman.movieApp.repository
+package com.roman.movieApp.model.retrofit
 
+import com.roman.movieApp.model.api.Genres
+import com.roman.movieApp.model.api.MovieDetail
+import com.roman.movieApp.model.api.MovieImages
+import com.roman.movieApp.model.api.RequestResult
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query

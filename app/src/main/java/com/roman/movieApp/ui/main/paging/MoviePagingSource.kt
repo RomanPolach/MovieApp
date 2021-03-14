@@ -1,7 +1,9 @@
-package com.roman.movieApp.repository
+package com.roman.movieApp.ui.main.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.roman.movieApp.model.api.Movie
+import com.roman.movieApp.model.repository.MovieRepository
 
 class MoviePagingSource(
     val movieRepository: MovieRepository
@@ -15,7 +17,7 @@ class MoviePagingSource(
             return LoadResult.Page(
                 data = response.movies ?: emptyList(),
                 prevKey = if (nextPage == 1) null else nextPage - 1,
-                nextKey = response.page + 1
+                nextKey = if (response.page == response.totalPages) null else response.page + 1
             )
         } catch (e: Exception) {
             return LoadResult.Error(e)

@@ -1,7 +1,7 @@
 package com.roman.movieApp.di
 
-import com.roman.movieApp.repository.MovieRepository
-import com.roman.movieApp.repository.MovieRepositoryImpl
+import com.roman.movieApp.model.repository.MovieRepository
+import com.roman.movieApp.model.repository.MovieRepositoryImpl
 import org.koin.dsl.module
 
 

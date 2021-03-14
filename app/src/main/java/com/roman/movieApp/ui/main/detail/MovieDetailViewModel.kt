@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.roman.movieApp.repository.MovieDetail
-import com.roman.movieApp.repository.MovieRepository
+import com.roman.movieApp.model.api.MovieDetail
+import com.roman.movieApp.model.repository.MovieRepository
 import com.roman.movieApp.util.State
 import com.roman.movieApp.util.launchRequestWithState
 

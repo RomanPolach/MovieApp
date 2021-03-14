@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.roman.movieApp.R
-import com.roman.movieApp.repository.Movie
+import com.roman.movieApp.model.api.Movie
 import com.roman.movieApp.util.imgBaseUrl
 import com.squareup.picasso.Picasso
 

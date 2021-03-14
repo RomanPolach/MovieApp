@@ -1,6 +1,6 @@
 package com.roman.movieApp.di
 
-import com.roman.movieApp.repository.ApiDescription
+import com.roman.movieApp.model.retrofit.ApiDescription
 import com.roman.movieApp.util.ErrorsCallAdapterFactory
 import com.roman.movieApp.util.apiKEY
 import com.squareup.moshi.Moshi

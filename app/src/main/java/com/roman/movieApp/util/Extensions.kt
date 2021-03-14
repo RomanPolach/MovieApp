@@ -5,8 +5,8 @@ import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
-import com.roman.movieApp.repository.MovieDbException
-import com.roman.movieApp.repository.NoInternetException
+import com.roman.movieApp.model.exception.MovieDbException
+import com.roman.movieApp.model.exception.NoInternetException
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch

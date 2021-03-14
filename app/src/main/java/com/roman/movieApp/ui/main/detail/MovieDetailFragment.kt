@@ -10,7 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.roman.movieApp.R
-import com.roman.movieApp.repository.MovieDetail
+import com.roman.movieApp.model.api.MovieDetail
 import com.roman.movieApp.util.State
 import com.roman.movieApp.util.handleError
 import com.roman.movieApp.util.imgBaseUrlBig

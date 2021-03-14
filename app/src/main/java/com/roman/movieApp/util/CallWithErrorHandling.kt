@@ -1,7 +1,7 @@
 package com.roman.movieApp.util
 
-import com.roman.movieApp.repository.MovieDbException
-import com.roman.movieApp.repository.NoInternetException
+import com.roman.movieApp.model.exception.MovieDbException
+import com.roman.movieApp.model.exception.NoInternetException
 import com.squareup.moshi.Moshi
 import retrofit2.Call
 import retrofit2.Callback

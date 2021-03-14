@@ -1,5 +1,8 @@
-package com.roman.movieApp.repository
+package com.roman.movieApp.model.repository
 
+import com.roman.movieApp.model.api.Movie
+import com.roman.movieApp.model.api.MovieDetail
+import com.roman.movieApp.model.api.RequestResult
 import kotlinx.coroutines.flow.Flow
 
 

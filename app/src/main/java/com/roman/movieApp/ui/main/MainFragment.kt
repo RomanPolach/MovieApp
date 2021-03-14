@@ -13,14 +13,17 @@ import android.widget.ImageView
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fondesa.recyclerviewdivider.RecyclerViewDivider
 import com.roman.movieApp.R
+import com.roman.movieApp.model.api.Movie
 import com.roman.movieApp.ui.main.adapters.MoviesAdapter
 import com.roman.movieApp.ui.main.adapters.SearchAdapter
+import com.roman.movieApp.util.State
 import com.roman.movieApp.util.dp
 import com.roman.movieApp.util.handleError
 import com.roman.movieApp.util.isVisible
@@ -34,7 +37,7 @@ class MainFragment : Fragment() {
 
     private val viewModel: MainViewModel by viewModel()
 
-    val searchAdapter = SearchAdapter { movie ->
+    private val searchAdapter = SearchAdapter { movie ->
         openMovieDetail(movie.id)
     }
     private val moviesAdapter = MoviesAdapter { movie ->
@@ -51,15 +54,27 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setToolbar()
-        addEpoxyDivider()
+        addDivider()
 
         recyclerView.layoutManager = LinearLayoutManager(context)
-        loadMovieList()
 
-        viewModel.observeSearchResults().observe(viewLifecycleOwner, Observer() { movies ->
-            recyclerView.adapter = searchAdapter
-            searchAdapter.submitList(movies)
+        viewModel.observeSearchResults().asLiveData().observe(viewLifecycleOwner, Observer<State<List<Movie>>> { state ->
+            showProgress(state is State.Loading)
+            when (state) {
+                is State.Loaded -> {
+                    recyclerView.adapter = searchAdapter
+                    searchAdapter.submitList(state.data)
+                }
+                is State.Error -> handleError(state.error)
+            }
         })
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.movies.collectLatest {
+                recyclerView.adapter = moviesAdapter
+                moviesAdapter.submitData(it)
+            }
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             moviesAdapter.loadStateFlow.collectLatest { loadStates ->
@@ -72,19 +87,7 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun loadMovieList(isReloading: Boolean = false) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.movies.collectLatest {
-                recyclerView.adapter = moviesAdapter
-                moviesAdapter.submitData(it)
-            }
-        }
-        if (isReloading) {
-            viewModel.loadMovies()
-        }
-    }
-
-    fun addEpoxyDivider() {
+    fun addDivider() {
         recyclerView.addItemDecoration(
             RecyclerViewDivider.with(requireContext())
                 .inset(16.dp, 16.dp)
@@ -95,11 +98,11 @@ class MainFragment : Fragment() {
         )
     }
 
-    fun openMovieDetail(movieId: String) {
+    private fun openMovieDetail(movieId: String) {
         findNavController().navigate(MainFragmentDirections.openMovieDetail(movieId))
     }
 
-    fun showProgress(show: Boolean) {
+    private fun showProgress(show: Boolean) {
         progressBar.isVisible = show
     }
 
@@ -130,7 +133,6 @@ class MainFragment : Fragment() {
         )
         searchIcon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN)
         mCloseButton.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN)
-
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(searchTerm: String): Boolean {
                 viewModel.setSearchTerm(searchTerm)
@@ -141,7 +143,7 @@ class MainFragment : Fragment() {
             override fun onQueryTextChange(searchTerm: String?): Boolean {
                 if (searchTerm.isNullOrBlank()) {
                     viewModel.resetSearch()
-                    loadMovieList(true)
+                    moviesAdapter.refresh()
                     hideKeyboard()
                 }
                 return true
